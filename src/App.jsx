@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import './App.css'
 import Block from './components/Block'
 // import { dataDB  } from './assets/db'
 import img from './assets/img/img.svg'
+import debounce from 'lodash.debounce'
 
 
 function App() {
@@ -10,7 +11,20 @@ function App() {
   const [category, setCategory] = useState(0)
   const [pagination, setPagination] = useState(1)
   const [search, setSearch] = useState('')
+  const [searchValue, setSearchValue] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+
+  const debounceUse = useCallback(
+    debounce((str) => {
+      setSearch(str)
+    }, 1000),
+    [],
+  )
+  
+  const updateValue = (e) => {
+    setSearchValue(e.target.value)
+    debounceUse(e.target.value)
+  }
 
   useEffect(() => {
     setIsLoading(true)
@@ -40,7 +54,7 @@ function App() {
             } key={cat}>{cat}</li>)}
           </ul>
 
-        <input value={search} onChange={(e) => setSearch(e.target.value)} type="text" />
+        <input value={searchValue} onChange={(e) => {updateValue(e)}} type="text" />
       </div>
       {!isLoading
       ?
